@@ -10,7 +10,7 @@ import hashlib
 POOL = pycassa.ConnectionPool('friends', server_list=settings.CASSANDRA_NODES)
 
 class Friends(CassaModel):
-    table = pycassa.ColumnFamily(POOL, 'friend')
+    table = pycassa.ColumnFamily(POOL, 'friends')
     
     user_id = models.TextField(primary_key=True)
     premium = models.BooleanField()
@@ -26,7 +26,7 @@ class Friends(CassaModel):
     '''
     @staticmethod
     def fromMap(mapRep):
-        return User(**mapRep)
+        return Friends(**mapRep)
     
     '''
         Creates a User object from the tuple return from Cassandra.
@@ -36,7 +36,7 @@ class Friends(CassaModel):
         mapRep = {key : val for key, val in cassRep[1].iteritems()}
         mapRep['user_id'] = str(cassRep[0])
         
-        return User.fromMap(mapRep)
+        return Friends.fromMap(mapRep)
     
     '''
         Method for getting single users from cassandra given the email, username or user_id.
@@ -44,13 +44,13 @@ class Friends(CassaModel):
     @staticmethod
     def get(user_id=None, username=None, email=None):
         if user_id:
-            return User.getByID(user_id)
+            return Friends.getByID(user_id)
         
         if username:
-            return User.getByUsername(username)
+            return Friends.getByUsername(username)
         
         if email:
-            return User.getByEmail(email)
+            return Friends.getByEmail(email)
         
         return None
     
@@ -63,7 +63,7 @@ class Friends(CassaModel):
     def getByID(user_id):
         if not isinstance(user_id, uuid.UUID):
             user_id = uuid.UUID(user_id)
-        return User.fromCassa((str(user_id), User.table.get(user_id)))
+        return Friends.fromCassa((str(user_id), Friends.table.get(user_id)))
     
     '''
         Gets the user given a username.
@@ -74,12 +74,12 @@ class Friends(CassaModel):
     def getByUsername(username):
         expr = pycassa.create_index_expression('username', username)
         clause = pycassa.create_index_clause([expr], count=1)
-        ans = list(User.table.get_indexed_slices(clause))
+        ans = list(Friends.table.get_indexed_slices(clause))
         
         if len(ans) == 0:
             return None
         
-        return User.fromCassa(ans[0])
+        return Friends.fromCassa(ans[0])
     
     '''
         Gets the user by the email.
@@ -90,12 +90,12 @@ class Friends(CassaModel):
     def getByEmail(email):
         expr = pycassa.create_index_expression('email', email)
         clause = pycassa.create_index_clause([expr], count=1)
-        ans = list(User.table.get_indexed_slices(clause))
+        ans = list(Friends.table.get_indexed_slices(clause))
         
         if len(ans) == 0:
             return None
         
-        return User.fromCassa(ans[0])
+        return Friends.fromCassa(ans[0])
     
     '''
         Gets all of the users and uses an offset and limit if
@@ -109,13 +109,13 @@ class Friends(CassaModel):
     @staticmethod
     def all(limit=settings.REST_FRAMEWORK['PAGINATE_BY'], page=None):
         if not page:
-            return [User.fromCassa(cassRep) for cassRep in User.table.get_range(row_count=limit)]
+            return [Friends.fromCassa(cassRep) for cassRep in Friends.table.get_range(row_count=limit)]
         else:
             if not isinstance(page, uuid.UUID):
                 page = uuid.UUID(page)
-            gen = User.table.get_range(start=page, row_count=limit + 1)
+            gen = Friends.table.get_range(start=page, row_count=limit + 1)
             gen.next()
-            return [User.fromCassa(cassRep) for cassRep in gen]
+            return [Friends.fromCassa(cassRep) for cassRep in gen]
     
     '''
         Hashes a password with the given salt. If no salt is provided, the salt that will be
@@ -136,20 +136,20 @@ class Friends(CassaModel):
     '''
     def save(self):
         user_id = uuid.uuid1() if not self.user_id else uuid.UUID(self.user_id)
-        User.table.insert(user_id, CassaUserSerializer(self).data)
+        Friends.table.insert(user_id, CassaFriendsSerializer(self).data)
         self.user_id = user_id
         
     def authenticate(self, password):
-       	return self.password == User.hash_password(password, self.salt)    
+       	return self.password == Friends.hash_password(password, self.salt)    
         
 '''
     The User serializer used to create a python dictionary for submitting to the
     Cassandra database with the correct options.
 '''
-class CassaUserSerializer(serializers.ModelSerializer):
+class CassaFriendsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('username', 'email', 'salt', 'password', 'active', 'facebook', 'premium')
+        model = Friends
+        fields = ('friends')
 
     
     

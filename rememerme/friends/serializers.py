@@ -1,4 +1,4 @@
-from models import User
+from models import Friends
 from rest_framework import serializers
 
 '''
@@ -6,5 +6,5 @@ from rest_framework import serializers
 '''
 class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('user_id', 'username', 'email')
+        model = Friends 
+        fields = ('user_id', 'friends')
