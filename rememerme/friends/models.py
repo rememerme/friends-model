@@ -7,10 +7,10 @@ from rest_framework import serializers
 import hashlib
 
 # User model faked to use Cassandra
-POOL = pycassa.ConnectionPool('users', server_list=settings.CASSANDRA_NODES)
+POOL = pycassa.ConnectionPool('friends', server_list=settings.CASSANDRA_NODES)
 
-class User(CassaModel):
-    table = pycassa.ColumnFamily(POOL, 'user')
+class Friends(CassaModel):
+    table = pycassa.ColumnFamily(POOL, 'friend')
     
     user_id = models.TextField(primary_key=True)
     premium = models.BooleanField()
