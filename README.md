@@ -1,4 +1,4 @@
 friends-model
 =============
 
-The model and serializers files for the session api
+The model and serializers files for the friend api
