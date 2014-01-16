@@ -1,9 +1,9 @@
 from django.db import models
 
 '''
-Created on Jan 7, 2014
+    Created on Jan 7, 2014
 
-@author: Andrew Oberlin
+    @author: Andrew Oberlin
 '''
 
 '''
@@ -38,4 +38,4 @@ class CassaModel(models.Model):
         pass
     
     class Meta:
-        app_label = u'users'
+        app_label = u'friends'
