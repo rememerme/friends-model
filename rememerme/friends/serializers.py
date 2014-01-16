@@ -8,3 +8,11 @@ class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends 
         fields = ('user_id', 'friends_list')
+
+class RequestsSerializer(serializers.ModelSerializer):
+    '''
+        The Friends serializer used to display a model to the web through json serialization.
+    '''
+    class Meta:
+        model = Requests 
+        fields = ('user_id', 'sent', 'received')
