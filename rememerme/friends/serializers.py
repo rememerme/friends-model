@@ -11,7 +11,7 @@ class FriendsSerializer(serializers.ModelSerializer):
 
 class RequestsSerializer(serializers.ModelSerializer):
     '''
-        The Friends serializer used to display a model to the web through json serialization.
+        The Requests serializer used to display a model to the web through json serialization.
     '''
     class Meta:
         model = Requests 

@@ -1,3 +1,11 @@
+'''
+    The models and Cassandra serializers for the Friends and 
+    Requests models to be used in the Friends, Requests, Received, and
+    Sent APIs. 
+
+    @author: Andy Oberlin, Jake Gregg
+'''
+
 from cassa import CassaModel
 from django.db import models
 import pycassa
@@ -9,6 +17,9 @@ import json
 # User model faked to use Cassandra
 POOL = pycassa.ConnectionPool('friends', server_list=settings.CASSANDRA_NODES)
 
+'''
+    The Friends model to support the API.
+'''
 class Friends(CassaModel):
     table = pycassa.ColumnFamily(POOL, 'friends')
     
@@ -58,8 +69,7 @@ class Friends(CassaModel):
     @staticmethod
     def all(limit=settings.REST_FRAMEWORK['PAGINATE_BY'], page=None):
         '''
-            Gets all of the users and uses an offset and limit if
-            supplied.
+            {idk if we need this method...}
         
             @param offset: Optional argument. Used to offset the query by so
                 many entries.
@@ -77,25 +87,29 @@ class Friends(CassaModel):
     
     def save(self):
         '''
-            Saves a set of users given by the cassandra in/output, which is
+            Saves a set of friends given by the cassandra in/output, which is
             a dictionary of values.
         
-            @param users: The set of users to save to the user store.
+            @param users: The user and friend list to store.
         '''
         user_id = uuid.uuid1() if not self.user_id else uuid.UUID(self.user_id)
         Friends.table.insert(user_id, CassaFriendsSerializer(self).data)
         self.user_id = str(user_id)
         
-        
+
 class CassaFriendsSerializer(serializers.ModelSerializer):
     '''
-        The User serializer used to create a python dictionary for submitting to the
+        The Friends serializer used to create a python dictionary for submitting to the
         Cassandra database with the correct options.
     '''
     class Meta:
         model = Friends
         fields = ('friends')
 
+
+'''
+    The Requests model to support the API
+'''
 class Requests(CassaModel):
     table = pycassa.ColumnFamily(POOL, 'requests')
     
@@ -106,7 +120,7 @@ class Requests(CassaModel):
     @staticmethod
     def fromMap(mapRep):
         '''
-            Creates a Friends object from a map object with the properties.
+            Creates a Requests object from a map object with the properties.
         '''
         requests = Requests(**mapRep)
         requests.sent = json.loads(requests.sent)
@@ -116,7 +130,7 @@ class Requests(CassaModel):
     @staticmethod
     def fromCassa(cassRep):
         '''
-            Creates a Friends object from the tuple return from Cassandra.
+            Creates a Requests object from the tuple return from Cassandra.
         '''
         mapRep = {key : val for key, val in cassRep[1].iteritems()}
         mapRep['user_id'] = str(cassRep[0])
@@ -126,7 +140,7 @@ class Requests(CassaModel):
     @staticmethod
     def get(user_id=None):
         '''
-            Method for getting a user's friends list from cassandra given the user_id.
+            Method for getting a user's friend requests list from cassandra given the user_id.
         '''
         if user_id:
             return Requests.getByID(user_id)
@@ -136,7 +150,7 @@ class Requests(CassaModel):
     @staticmethod
     def getByID(user_id):
         '''
-            Gets the user's friends given an ID.
+            Gets the user's friend requests given an ID.
                     
             @param user_id: The uuid of the user.
         '''
@@ -146,7 +160,7 @@ class Requests(CassaModel):
     
     def save(self):
         '''
-            Saves a set of users given by the cassandra in/output, which is
+            Saves a set of friend requests given by the cassandra in/output, which is
             a dictionary of values.
         
             @param users: The set of users to save to the user store.
@@ -158,7 +172,7 @@ class Requests(CassaModel):
         
 class CassaRequestsSerializer(serializers.ModelSerializer):
     '''
-        The User serializer used to create a python dictionary for submitting to the
+        The Requests serializer used to create a python dictionary for submitting to the
         Cassandra database with the correct options.
     '''
     class Meta:
