@@ -1,4 +1,4 @@
-from models import Friends
+from models import Friends, ReceivedRequests, SentRequests
 from rest_framework import serializers
 
 class FriendsSerializer(serializers.ModelSerializer):
@@ -8,11 +8,19 @@ class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends 
         fields = ('user_id', 'friends_list')
-
-class RequestsSerializer(serializers.ModelSerializer):
+        
+class ReceivedRequestsSerializer(serializers.ModelSerializer):
     '''
         The Requests serializer used to display a model to the web through json serialization.
     '''
     class Meta:
-        model = Requests 
-        fields = ('user_id', 'sent', 'received')
+        model = ReceivedRequests 
+        fields = ('requests')
+        
+class SentRequestsSerializer(serializers.ModelSerializer):
+    '''
+        The Requests serializer used to display a model to the web through json serialization.
+    '''
+    class Meta:
+        model = SentRequests 
+        fields = ('requests')
