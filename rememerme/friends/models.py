@@ -85,7 +85,7 @@ class CassaFriendsSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = Friends
-        fields = ('friends')
+        fields = ('friends', )
 
 
 '''
@@ -159,7 +159,7 @@ class CassaReceivedRequestsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ReceivedRequests
-        fields = ('user_id', 'requests')    
+        fields = ('requests', )    
     
 '''
     The Received Requests model to support the API
@@ -232,4 +232,4 @@ class CassaSentRequestsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SentRequests
-        fields = ('user_id', 'requests') 
+        fields = ('requests', ) 

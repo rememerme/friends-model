@@ -15,7 +15,7 @@ class ReceivedRequestsSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = ReceivedRequests 
-        fields = ('requests')
+        fields = ('requests', )
         
 class SentRequestsSerializer(serializers.ModelSerializer):
     '''
@@ -23,4 +23,4 @@ class SentRequestsSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = SentRequests 
-        fields = ('requests')
+        fields = ('requests', )
