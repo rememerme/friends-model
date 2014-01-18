@@ -83,9 +83,12 @@ class CassaFriendsSerializer(serializers.ModelSerializer):
         The Friends serializer used to create a python dictionary for submitting to the
         Cassandra database with the correct options.
     '''
+    def transform_friends_list(self, obj, value):
+        return json.dumps(value)
+
     class Meta:
         model = Friends
-        fields = ('friends', )
+        fields = ('friends_list', )
 
 
 '''

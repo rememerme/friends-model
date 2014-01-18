@@ -14,9 +14,6 @@ class ReceivedRequestsSerializer(serializers.ModelSerializer):
     '''
         The Requests serializer used to display a model to the web through json serialization.
     '''
-    def transform_requests(self, obj, value):
-        return json.dumps(value)
-    
     class Meta:
         model = ReceivedRequests 
         fields = ('requests', )
@@ -25,9 +22,6 @@ class SentRequestsSerializer(serializers.ModelSerializer):
     '''
         The Requests serializer used to display a model to the web through json serialization.
     '''
-    def transform_requests(self, obj, value):
-        return json.dumps(value)
-    
     class Meta:
         model = SentRequests 
         fields = ('requests', )
